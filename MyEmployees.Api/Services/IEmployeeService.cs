@@ -8,7 +8,10 @@ namespace MyEmployees.Api.Services
     {
         Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
         Task<EmployeeDto?> GetEmployeeByIdAsync(int id);
-        Task AddEmployeeAsync(CreateEmployeeDto createEmployeeDto);
+
+        // ← Changement ici : on retourne maintenant l'employé créé
+        Task<EmployeeDto> AddEmployeeAsync(CreateEmployeeDto createEmployeeDto);
+
         Task UpdateEmployeeAsync(int id, CreateEmployeeDto updateEmployeeDto);
         Task DeleteEmployeeAsync(int id);
     }
