@@ -47,43 +47,64 @@ namespace MyEmployees.Api.Services
             }
         }
 
-        public async Task AddEmployeeAsync(CreateEmployeeDto employeeDto)
+        public async Task<EmployeeDto> AddEmployeeAsync(CreateEmployeeDto employeeDto)
         {
+            if (employeeDto == null)
+                throw new ArgumentNullException(nameof(employeeDto));
+
             try
             {
                 var employee = _mapper.Map<Employee>(employeeDto);
+
+                // Cette ligne ajoute l'employé et fait SaveChanges() → l'ID est généré ici
                 await _employeeRepository.AddEmployeeAsync(employee);
+
+                // On retourne le DTO de l'employé créé (avec son nouvel ID)
+                return _mapper.Map<EmployeeDto>(employee);
             }
             catch (Exception ex)
             {
-                // Log the exception (logging mechanism not shown here)
-                throw new ApplicationException("An error occurred while adding a new employee.", ex);
+                // TODO : utiliser un ILogger en production
+                throw new ApplicationException("Une erreur est survenue lors de l'ajout de l'employé.", ex);
             }
         }
 
-        public async Task UpdateEmployeeAsync(int id, CreateEmployeeDto UpdateEmployeeDto)
+        public async Task UpdateEmployeeAsync(int id, CreateEmployeeDto updateDto)
         {
-            if (id > 0)
+            if (id <= 0)
             {
-                    try
-                    {
-                        var existingEmployee = await _employeeRepository.GetEmployeeByIdAsync(id);
-                        if (existingEmployee == null)
-                        {
-                            throw new KeyNotFoundException($"Employee with ID {id} not found.");
-                        }
-                        _mapper.Map(UpdateEmployeeDto, existingEmployee);
-                        await _employeeRepository.UpdateEmployeeAsync(existingEmployee);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log the exception (logging mechanism not shown here)
-                        throw new ApplicationException($"An error occurred while updating employee with ID {id}.", ex);
-                    }
+                throw new ArgumentException("L'ID de l'employé est invalide.", nameof(id));
             }
-            else
+
+            if (updateDto == null)
             {
-                throw new ArgumentException("Invalid employee ID.");
+                throw new ArgumentNullException(nameof(updateDto));
+            }
+
+            try
+            {
+                var existingEmployee = await _employeeRepository.GetEmployeeByIdAsync(id);
+
+                if (existingEmployee == null)
+                {
+                    throw new KeyNotFoundException($"Employé avec l'ID {id} non trouvé.");
+                }
+
+                // Mise à jour des propriétés via AutoMapper
+                _mapper.Map(updateDto, existingEmployee);
+
+                // Ou manuellement si tu préfères (plus explicite) :
+                // existingEmployee.FirstName = updateDto.FirstName;
+                // existingEmployee.LastName  = updateDto.LastName;
+                // existingEmployee.Email     = updateDto.Email;
+                // existingEmployee.DepartmentId = updateDto.DepartmentId;
+
+                await _employeeRepository.UpdateEmployeeAsync(existingEmployee);
+            }
+            catch (Exception ex)
+            {
+                // Log l'erreur ici (ILogger de préférence)
+                throw new ApplicationException($"Erreur lors de la mise à jour de l'employé {id}.", ex);
             }
         }
         public async Task DeleteEmployeeAsync(int id)
