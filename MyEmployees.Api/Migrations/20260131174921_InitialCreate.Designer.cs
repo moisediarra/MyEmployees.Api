@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyEmployees.Api.Data;
 
@@ -10,9 +11,11 @@ using MyEmployees.Api.Data;
 namespace MyEmployees.Api.Migrations
 {
     [DbContext(typeof(MyEmployeesDbContext))]
-    partial class MyEmployeesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260131174921_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
