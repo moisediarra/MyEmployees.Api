@@ -63,20 +63,35 @@ namespace MyEmployees.Api.Services
 
         public async Task UpdateEmployeeAsync(int id, CreateEmployeeDto UpdateEmployeeDto)
         {
-            try
+            if (id > 0)
             {
-                var employee = _mapper.Map<Employee>(UpdateEmployeeDto);
-                await _employeeRepository.UpdateEmployeeAsync(employee);
+                    try
+                    {
+                        var existingEmployee = await _employeeRepository.GetEmployeeByIdAsync(id);
+                        if (existingEmployee == null)
+                        {
+                            throw new KeyNotFoundException($"Employee with ID {id} not found.");
+                        }
+                        _mapper.Map(UpdateEmployeeDto, existingEmployee);
+                        await _employeeRepository.UpdateEmployeeAsync(existingEmployee);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the exception (logging mechanism not shown here)
+                        throw new ApplicationException($"An error occurred while updating employee with ID {id}.", ex);
+                    }
             }
-            catch (Exception ex)
+            else
             {
-                // Log the exception (logging mechanism not shown here)
-                throw new ApplicationException("An error occurred while updating the employee.", ex);
+                throw new ArgumentException("Invalid employee ID.");
             }
         }
-
         public async Task DeleteEmployeeAsync(int id)
         {
+            if(id == 0)
+                {
+                throw new ArgumentException("Invalid employee ID.");
+            }
             try
             {
                 await _employeeRepository.DeleteEmployeeAsync(id);
