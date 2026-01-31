@@ -7,5 +7,6 @@ namespace MyEmployees.Api.Repositories
         Task<Department?> GetDepartmentByIdAsync(int id);
         Task AddDepartmentAsync(Department department);
         Task UpdateDepartmentAsync(Department department);
+        Task DeleteDepartmentAsync(int id);
     }
 }
