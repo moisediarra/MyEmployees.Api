@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyEmployees.Api.DTOs;
 using MyEmployees.Api.Services;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyEmployees.Api.Controllers
 {
+    [Authorize]
     [Route("api/employees/")]
     [ApiController]
     public class EmployeesController : ControllerBase
@@ -19,6 +21,7 @@ namespace MyEmployees.Api.Controllers
 
         //Get all Employee
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAllEmployeeAsync()
         {
             var employees = await _employeeService.GetAllEmployeesAsync();
@@ -26,6 +29,7 @@ namespace MyEmployees.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<EmployeeDto>> GetById(int id)          // ← no Async
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
@@ -34,6 +38,7 @@ namespace MyEmployees.Api.Controllers
         }
         //POST
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<ActionResult<EmployeeDto>> Create(CreateEmployeeDto createEmployeeDto)
         {
             var employee = await _employeeService.AddEmployeeAsync(createEmployeeDto);
@@ -41,6 +46,7 @@ namespace MyEmployees.Api.Controllers
         }
         // Update
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEmployee(int id, [FromBody] CreateEmployeeDto updateDto)
         {
             await _employeeService.UpdateEmployeeAsync(id, updateDto);

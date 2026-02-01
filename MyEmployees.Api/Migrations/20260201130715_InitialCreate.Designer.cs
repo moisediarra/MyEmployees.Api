@@ -11,7 +11,7 @@ using MyEmployees.Api.Data;
 namespace MyEmployees.Api.Migrations
 {
     [DbContext(typeof(MyEmployeesDbContext))]
-    [Migration("20260131174921_InitialCreate")]
+    [Migration("20260201130715_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

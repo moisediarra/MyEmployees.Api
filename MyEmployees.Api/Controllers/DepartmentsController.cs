@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyEmployees.Api.DTOs;
 using MyEmployees.Api.Services;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyEmployees.Api.Controllers
 {
+    [Authorize]
     [Route("api/departments")]   // ← good, explicit route
     [ApiController]
     public class DepartmentsController : ControllerBase
@@ -19,6 +21,7 @@ namespace MyEmployees.Api.Controllers
 
         // GET all departments
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<DepartmentDto>>> GetAllDepartments()
         {
             var departments = await _departmentService.GetAllDepartmentsAsync();
@@ -27,6 +30,7 @@ namespace MyEmployees.Api.Controllers
 
         // GET single department by id  ← renamed (no Async + meaningful name)
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<DepartmentDto>> GetDepartment(int id)
         {
             var department = await _departmentService.GetDepartmentByIdAsync(id);
@@ -36,6 +40,7 @@ namespace MyEmployees.Api.Controllers
 
         // POST - create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<DepartmentDto>> Create([FromBody] CreateDepartmentDto createDto)
         {
             // Optional: add basic validation if not using FluentValidation
@@ -51,6 +56,7 @@ namespace MyEmployees.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] CreateDepartmentDto updateDto)
         {
             var exists = await _departmentService.GetDepartmentByIdAsync(id);
@@ -61,6 +67,7 @@ namespace MyEmployees.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var exists = await _departmentService.GetDepartmentByIdAsync(id);
